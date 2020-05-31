@@ -47,7 +47,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
             */
 
             // Drive straight controls
-            if(gamepad1.x) driveEncoderCountsGyro(1000, DRIVE_SPEED, hardware.heading());
+            if(gamepad1.x) driveInchesGyro(48.0, DRIVE_SPEED, hardware.heading());
 
 
             telemetry.addLine("Running");
@@ -63,6 +63,9 @@ public class TestRobotDriveStraight extends LinearOpMode {
     }
     private void driveInches(double inches, double speed) {
         driveEncoderCounts((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed);
+    }
+    private void driveInchesGyro(double inches, double speed, double targetHeading) {
+        driveEncoderCountsGyro((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed, targetHeading);
     }
 
     private void driveEncoderCounts(int counts, double speed) {
