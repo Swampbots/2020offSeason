@@ -49,7 +49,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
             */
 
             // Drive straight controls
-            if(gamepad1.x) driveInchesGyro(48.0, DRIVE_SPEED, hardware.heading());
+            if(gamepad1.x) driveInchesGyro(123456.0, DRIVE_SPEED, hardware.heading());
 
 
             telemetry.addLine("Running");
