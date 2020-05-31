@@ -95,5 +95,41 @@ public class TestRobotDriveStraight extends LinearOpMode {
         hardware.rearRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+    private void driveEncoderCountsGyro(int counts, double speed, double targetHeading) {
+        hardware.setDriveCounts(counts);
+
+        hardware.frontLeft.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.frontRight.setMode (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.rearLeft.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.rearRight.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+
+        hardware.setLeftPower(speed);
+        hardware.setRightPower(speed);
+
+        double heading;
+        double error;
+
+        while(opModeIsActive() &&
+                hardware.frontLeft.isBusy() &&
+                hardware.frontRight.isBusy() &&
+                hardware.rearLeft.isBusy() &&
+                hardware.rearRight.isBusy()) {
+
+            heading = hardware.heading();
+            error   = heading - targetHeading;
+
+            telemetry.addData("error", error);
+            telemetry.update();
+        }
+
+        hardware.setLeftPower(0.0);
+        hardware.setRightPower(0.0);
+
+        hardware.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.rearLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.rearRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
 
 }
