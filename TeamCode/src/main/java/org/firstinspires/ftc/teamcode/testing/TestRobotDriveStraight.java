@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.OffSeasonHardware;
 
+@TeleOp(name = "Test: Drive Straight", group = "Testing")
 public class TestRobotDriveStraight extends LinearOpMode {
 
     // Hardware
