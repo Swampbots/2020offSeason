@@ -123,7 +123,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
                 hardware.rearRight.isBusy()) {
 
             heading = hardware.heading();
-            error   = heading - targetHeading;
+            error   = targetHeading - heading;
             correction = error * K_P;
 
             telemetry.addData("error", error);
