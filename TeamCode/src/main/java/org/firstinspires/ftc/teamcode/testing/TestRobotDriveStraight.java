@@ -16,6 +16,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
     // Method-Specific
     private final double DRIVE_SPEED = 0.4; // Default drive speed
     private final double COUNTS_PER_INCH_EMPIRICAL = 1000 / 24.0;    // Determined by testing (1000 counts / 24.0 inches)
+    private final double K_P = 0.1;   // Proportional coefficient for gyro-controlled driving
 
     @Override
     public void runOpMode() {
@@ -113,6 +114,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
 
         double heading;
         double error;
+        double correction;
 
         while(opModeIsActive() &&
                 hardware.frontLeft.isBusy() &&
@@ -122,6 +124,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
 
             heading = hardware.heading();
             error   = heading - targetHeading;
+            correction = error * K_P;
 
             telemetry.addData("error", error);
             telemetry.update();
