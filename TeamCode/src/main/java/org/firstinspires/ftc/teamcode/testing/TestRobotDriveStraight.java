@@ -15,7 +15,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
 
     // Method-Specific
     private final double DRIVE_SPEED = 0.4; // Default drive speed
-    private final double MAX_DRIVE_SPEED = Math.min(DRIVE_SPEED + 0.2, 1.0);
+    private final double MAX_DRIVE_SPEED = Math.min(DRIVE_SPEED + 0.1, 1.0);
     private final double COUNTS_PER_INCH_EMPIRICAL = 1000 / 24.0;    // Determined by testing (1000 counts / 24.0 inches)
     private final double K_P = 0.1;   // Proportional coefficient for gyro-controlled driving
 
@@ -116,6 +116,8 @@ public class TestRobotDriveStraight extends LinearOpMode {
         double heading;
         double error;
         double correction;
+        double newLeftSpeed;
+        double newRightSpeed;
 
         while(opModeIsActive() &&
                 hardware.frontLeft.isBusy() &&
@@ -126,10 +128,12 @@ public class TestRobotDriveStraight extends LinearOpMode {
             heading = hardware.heading();
             error   = targetHeading - heading;
             correction = error * K_P;
+            newLeftSpeed = Math.min((speed - correction), MAX_DRIVE_SPEED);
+            newRightSpeed = Math.min((speed + correction), MAX_DRIVE_SPEED);
 
             // -ve versus +ve depends on whether cw or ccw rotation is +ve
-            hardware.setLeftPower(speed - correction);
-            hardware.setRightPower(speed + correction);
+            hardware.setLeftPower(newLeftSpeed);
+            hardware.setRightPower(newRightSpeed);
 
             telemetry.addData("error", error);
             telemetry.addData("correction", correction);
