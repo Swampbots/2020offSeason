@@ -14,7 +14,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
     private final boolean INIT_IMU = true;
 
     // Method-Specific
-    private final double DRIVE_SPEED = 0.4;
+    private final double DRIVE_SPEED = 0.4; // Default drive speed
     private final double COUNTS_PER_INCH_EMPIRICAL = 1000 / 24.0;    // Determined by testing (1000 counts / 24.0 inches)
 
     @Override
