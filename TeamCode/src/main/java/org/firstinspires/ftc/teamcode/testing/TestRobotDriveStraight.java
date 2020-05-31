@@ -126,7 +126,14 @@ public class TestRobotDriveStraight extends LinearOpMode {
             error   = targetHeading - heading;
             correction = error * K_P;
 
+            // -ve versus +ve depends on whether cw or ccw rotation is +ve
+            hardware.setLeftPower(speed - correction);
+            hardware.setRightPower(speed + correction);
+
             telemetry.addData("error", error);
+            telemetry.addData("correction", correction);
+            telemetry.addData("front left power",   hardware.frontLeft.getPower());
+            telemetry.addData("front right power",  hardware.frontRight.getPower());
             telemetry.update();
         }
 
