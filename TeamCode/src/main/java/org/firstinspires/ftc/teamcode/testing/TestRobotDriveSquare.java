@@ -13,6 +13,12 @@ public class TestRobotDriveSquare extends LinearOpMode {
     OffSeasonHardware hardware = new OffSeasonHardware();
     private final boolean INIT_IMU = true;
 
+    // Method-specific
+    private final double DRIVE_SPEED = 0.8; // Default drive speed
+    private final double MAX_DRIVE_SPEED = Math.min(DRIVE_SPEED + 0.1, 1.0);
+    private final double COUNTS_PER_INCH_EMPIRICAL = 1000 / 24.0;    // Determined by testing (1000 counts / 24.0 inches)
+    private final double K_P = 0.01;   // Proportional coefficient for gyro-controlled driving
+
     @Override
     public void runOpMode() {
         telemetry.addLine("Initializing");
@@ -36,6 +42,60 @@ public class TestRobotDriveSquare extends LinearOpMode {
 
     }
 
+    private void driveInchesGyro(double inches, double speed, double targetHeading) {
+        driveEncoderCountsGyro((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed, targetHeading);
+    }
+
+    private void driveEncoderCountsGyro(int counts, double speed, double targetHeading) {
+        hardware.setDriveCounts(counts);
+
+        hardware.frontLeft.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.frontRight.setMode (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.rearLeft.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.rearRight.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+
+        hardware.setLeftPower(speed);
+        hardware.setRightPower(speed);
+
+        double heading;
+        double error;
+        double correction;
+        double newLeftSpeed;
+        double newRightSpeed;
+
+        while(opModeIsActive() &&
+                hardware.frontLeft.isBusy() &&
+                hardware.frontRight.isBusy() &&
+                hardware.rearLeft.isBusy() &&
+                hardware.rearRight.isBusy() &&
+                !gamepad1.dpad_down) {                // Canceled on dpad down
+
+            heading = hardware.heading();
+            error   = targetHeading - heading;
+            correction = error * K_P;
+            newLeftSpeed = Math.min((speed + correction), MAX_DRIVE_SPEED);
+            newRightSpeed = Math.min((speed - correction), MAX_DRIVE_SPEED);
+
+            // -ve versus +ve depends on whether cw or ccw rotation is +ve
+            hardware.setLeftPower(newLeftSpeed);
+            hardware.setRightPower(newRightSpeed);
+
+            telemetry.addData("error", error);
+            telemetry.addData("correction", correction);
+            telemetry.addData("front left power",   hardware.frontLeft.getPower());
+            telemetry.addData("front right power",  hardware.frontRight.getPower());
+            telemetry.update();
+        }
+
+        hardware.setLeftPower(0.0);
+        hardware.setRightPower(0.0);
+
+        hardware.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.rearLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.rearRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
 
 
 }
