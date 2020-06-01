@@ -129,8 +129,8 @@ public class TestRobotDriveStraight extends LinearOpMode {
             heading = hardware.heading();
             error   = targetHeading - heading;
             correction = error * K_P;
-            newLeftSpeed = Math.min((speed - correction), MAX_DRIVE_SPEED);
-            newRightSpeed = Math.min((speed + correction), MAX_DRIVE_SPEED);
+            newLeftSpeed = Math.min((speed + correction), MAX_DRIVE_SPEED);
+            newRightSpeed = Math.min((speed - correction), MAX_DRIVE_SPEED);
 
             // -ve versus +ve depends on whether cw or ccw rotation is +ve
             hardware.setLeftPower(newLeftSpeed);
