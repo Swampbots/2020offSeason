@@ -45,6 +45,9 @@ public class TestRobotDriveSquare extends LinearOpMode {
     private void driveInchesGyro(double inches, double speed, double targetHeading) {
         driveEncoderCountsGyro((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed, targetHeading);
     }
+    private void driveInchesGyroNoStop(double inches, double speed, double targetHeading) {
+        driveEncoderCountsGyroNoStop((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed, targetHeading);
+    }
 
     private void driveEncoderCountsGyro(int counts, double speed, double targetHeading) {
         hardware.setDriveCounts(counts);
@@ -94,6 +97,53 @@ public class TestRobotDriveSquare extends LinearOpMode {
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hardware.rearLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hardware.rearRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+    private void driveEncoderCountsGyroNoStop(int counts, double speed, double targetHeading) {
+        hardware.setDriveCounts(counts);
+
+        hardware.frontLeft.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.frontRight.setMode (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.rearLeft.setMode   (DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.rearRight.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
+
+        hardware.setLeftPower(speed);
+        hardware.setRightPower(speed);
+
+        double heading;
+        double error;
+        double correction;
+        double newLeftSpeed;
+        double newRightSpeed;
+
+        while(opModeIsActive() &&
+                hardware.frontLeft.isBusy() &&
+                hardware.frontRight.isBusy() &&
+                hardware.rearLeft.isBusy() &&
+                hardware.rearRight.isBusy() &&
+                !gamepad1.dpad_down) {                // Canceled on dpad down
+
+            heading = hardware.heading();
+            error   = targetHeading - heading;
+            correction = error * K_P;
+            newLeftSpeed = Math.min((speed + correction), MAX_DRIVE_SPEED);
+            newRightSpeed = Math.min((speed - correction), MAX_DRIVE_SPEED);
+
+            // -ve versus +ve depends on whether cw or ccw rotation is +ve
+            hardware.setLeftPower(newLeftSpeed);
+            hardware.setRightPower(newRightSpeed);
+
+            telemetry.addData("error", error);
+            telemetry.addData("correction", correction);
+            telemetry.addData("front left power",   hardware.frontLeft.getPower());
+            telemetry.addData("front right power",  hardware.frontRight.getPower());
+            telemetry.update();
+        }
+
+        hardware.frontLeft. setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.rearLeft.  setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.rearRight. setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
