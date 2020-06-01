@@ -17,7 +17,7 @@ public class TestRobotDriveStraight extends LinearOpMode {
     private final double DRIVE_SPEED = 0.4; // Default drive speed
     private final double MAX_DRIVE_SPEED = Math.min(DRIVE_SPEED + 0.1, 1.0);
     private final double COUNTS_PER_INCH_EMPIRICAL = 1000 / 24.0;    // Determined by testing (1000 counts / 24.0 inches)
-    private final double K_P = 0.1;   // Proportional coefficient for gyro-controlled driving
+    private final double K_P = 0.01;   // Proportional coefficient for gyro-controlled driving
 
     @Override
     public void runOpMode() {
