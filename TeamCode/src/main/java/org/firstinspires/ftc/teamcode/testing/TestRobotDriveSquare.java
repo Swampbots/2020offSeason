@@ -35,6 +35,7 @@ public class TestRobotDriveSquare extends LinearOpMode {
 
         driveInchesGyroNoStop(60.0, DRIVE_SPEED, 0);
         driveInchesGyro(72.0, DRIVE_SPEED, -90);
+        driveInchesGyro(3.0, 0, -90);
 
         while(opModeIsActive()) {
             telemetry.addLine("Finished");
