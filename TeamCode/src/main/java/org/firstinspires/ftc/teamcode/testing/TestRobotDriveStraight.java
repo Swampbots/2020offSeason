@@ -123,7 +123,8 @@ public class TestRobotDriveStraight extends LinearOpMode {
                 hardware.frontLeft.isBusy() &&
                 hardware.frontRight.isBusy() &&
                 hardware.rearLeft.isBusy() &&
-                hardware.rearRight.isBusy()) {
+                hardware.rearRight.isBusy() &&
+                !gamepad1.dpad_down) {                // Canceled on dpad down
 
             heading = hardware.heading();
             error   = targetHeading - heading;
