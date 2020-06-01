@@ -43,6 +43,12 @@ public class OffSeasonHardware {
         frontLeft.  setDirection(DcMotorSimple.Direction.REVERSE);
         rearLeft.   setDirection(DcMotorSimple.Direction.REVERSE);
 
+        frontLeft.  setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.  setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rearLeft.  setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rearRight.  setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
         intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // IMU
