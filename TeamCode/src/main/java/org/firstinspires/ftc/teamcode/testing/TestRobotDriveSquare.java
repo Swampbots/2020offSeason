@@ -19,6 +19,9 @@ public class TestRobotDriveSquare extends LinearOpMode {
     private final double COUNTS_PER_INCH_EMPIRICAL = 1000 / 24.0;    // Determined by testing (1000 counts / 24.0 inches)
     private final double K_P = 0.01;   // Proportional coefficient for gyro-controlled driving
 
+    private final double DRIVE_TIMEOUT = 10.0;
+    private final double ADJUST_TIMEOUT = 2.0;
+
     @Override
     public void runOpMode() {
         telemetry.addLine("Initializing");
@@ -33,26 +36,24 @@ public class TestRobotDriveSquare extends LinearOpMode {
         telemetry.addLine("Running");
         telemetry.update();
 
-        driveInchesGyroNoStop(60.0, DRIVE_SPEED, 0);
-        driveInchesGyro(72.0, DRIVE_SPEED, -90);
-        driveInchesGyro(3.0, 0, -90);
+        driveInchesGyroNoStop(60.0, DRIVE_SPEED, 0, DRIVE_TIMEOUT);
+        driveInchesGyro(72.0, DRIVE_SPEED, -90, DRIVE_TIMEOUT);
+        driveInchesGyro(60.0, 0, -90, ADJUST_TIMEOUT);
 
         while(opModeIsActive()) {
             telemetry.addLine("Finished");
             telemetry.update();
         }
-
-
     }
 
-    private void driveInchesGyro(double inches, double speed, double targetHeading) {
-        driveEncoderCountsGyro((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed, targetHeading);
+    private void driveInchesGyro(double inches, double speed, double targetHeading, double timeout) {
+        driveEncoderCountsGyro((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed, targetHeading, timeout);
     }
-    private void driveInchesGyroNoStop(double inches, double speed, double targetHeading) {
-        driveEncoderCountsGyroNoStop((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed, targetHeading);
+    private void driveInchesGyroNoStop(double inches, double speed, double targetHeading, double timeout) {
+        driveEncoderCountsGyroNoStop((int)(inches * COUNTS_PER_INCH_EMPIRICAL), speed, targetHeading, timeout);
     }
 
-    private void driveEncoderCountsGyro(int counts, double speed, double targetHeading) {
+    private void driveEncoderCountsGyro(int counts, double speed, double targetHeading, double timeout) {
         hardware.setDriveCounts(counts);
 
         hardware.frontLeft.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
@@ -68,13 +69,15 @@ public class TestRobotDriveSquare extends LinearOpMode {
         double correction;
         double newLeftSpeed;
         double newRightSpeed;
+        double startTime = getRuntime();
 
         while(opModeIsActive() &&
                 hardware.frontLeft.isBusy() &&
                 hardware.frontRight.isBusy() &&
                 hardware.rearLeft.isBusy() &&
                 hardware.rearRight.isBusy() &&
-                !gamepad1.dpad_down) {                // Canceled on dpad down
+                !gamepad1.dpad_down &&
+                (getRuntime() - startTime) < timeout) {                // Canceled on dpad down
 
             heading = hardware.heading();
             error   = targetHeading - heading;
@@ -102,7 +105,7 @@ public class TestRobotDriveSquare extends LinearOpMode {
         hardware.rearRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-    private void driveEncoderCountsGyroNoStop(int counts, double speed, double targetHeading) {
+    private void driveEncoderCountsGyroNoStop(int counts, double speed, double targetHeading, double timeout) {
         hardware.setDriveCounts(counts);
 
         hardware.frontLeft.setMode  (DcMotor.RunMode.RUN_TO_POSITION);
@@ -118,13 +121,15 @@ public class TestRobotDriveSquare extends LinearOpMode {
         double correction;
         double newLeftSpeed;
         double newRightSpeed;
+        double startTime = getRuntime();
 
         while(opModeIsActive() &&
                 hardware.frontLeft.isBusy() &&
                 hardware.frontRight.isBusy() &&
                 hardware.rearLeft.isBusy() &&
                 hardware.rearRight.isBusy() &&
-                !gamepad1.dpad_down) {                // Canceled on dpad down
+                !gamepad1.dpad_down &&
+                (getRuntime() - startTime) < timeout) {                // Canceled on dpad down
 
             heading = hardware.heading();
             error   = targetHeading - heading;
